@@ -67,7 +67,24 @@ class Day extends Component {
         containerStyle.push({backgroundColor: marking.selectedColor});
       }
       dotStyle.push(this.style.selectedDot);
-      textStyle.push(this.style.selectedText);
+      if(this.props.state === 'today'){
+        textStyle.push(this.style.todayText);
+      }else{
+        textStyle.push(this.style.selectedText);
+      }
+    } else if (marking.selected2) {
+      containerStyle.push(this.style.selected2);
+      if (marking.selectedColor) {
+        containerStyle.push({backgroundColor: marking.selectedColor});
+      }
+      dotStyle.push(this.style.selectedDot);
+
+      if(this.props.state === 'today'){
+        textStyle.push(this.style.todayText);
+      }else{
+        textStyle.push(this.style.selectedText);
+      }
+
     } else if (isDisabled) {
       textStyle.push(this.style.disabledText);
     } else if (this.props.state === 'today') {
