@@ -40,33 +40,37 @@ class Day extends Component {
     return shouldUpdate(this.props, nextProps, ['state', 'children', 'marking', 'onPress', 'onLongPress']);
   }
 
+  renderDots(marking) {
+    const baseDotStyle = [this.style.dot, this.style.visibleDot];
+    if (marking.dots && Array.isArray(marking.dots) && marking.dots.length > 0) {
+      // Filter out dots so that we we process only those items which have key and color property
+      const validDots = marking.dots.filter(d => (d && d.color));
+      return validDots.map((dot, index) => {
+        const marginLeft = index !== 0 ? 2 : 0;
+        return (
+          <View key={dot.key ? dot.key : index} style={[baseDotStyle,
+            { backgroundColor: marking.selected && dot.selectedDotColor ? dot.selectedDotColor : dot.color, marginLeft}]}/>
+        );
+      });
+    }
+    return;
+  }
+
   render() {
     const containerStyle = [this.style.base];
     const textStyle = [this.style.text];
     const dotStyle = [this.style.dot];
 
     let marking = this.props.marking || {};
-    if (marking && marking.constructor === Array && marking.length) {
-      marking = {
-        marking: true
-      };
-    }
+    const dot = this.renderDots(marking);
+ 
     const isDisabled = typeof marking.disabled !== 'undefined' ? marking.disabled : this.props.state === 'disabled';
-    let dot;
-    if (marking.marked) {
-      dotStyle.push(this.style.visibleDot);
-      if (marking.dotColor) {
-        dotStyle.push({backgroundColor: marking.dotColor});
-      }
-      dot = (<View style={dotStyle}/>);
-    }
 
     if (marking.selected) {
       containerStyle.push(this.style.selected);
       if (marking.selectedColor) {
         containerStyle.push({backgroundColor: marking.selectedColor});
       }
-      dotStyle.push(this.style.selectedDot);
       if(this.props.state === 'today'){
         textStyle.push(this.style.todayText);
       }else{
@@ -77,7 +81,6 @@ class Day extends Component {
       if (marking.selectedColor) {
         containerStyle.push({backgroundColor: marking.selectedColor});
       }
-      dotStyle.push(this.style.selectedDot);
 
       if(this.props.state === 'today'){
         textStyle.push(this.style.todayText);
@@ -101,10 +104,11 @@ class Day extends Component {
         disabled={marking.disableTouchEvent}
       >
         <Text allowFontScaling={false} style={textStyle}>{String(this.props.children)}</Text>
-        {dot}
+        <View style={{flexDirection: 'row', marginTop: -1, width: 10, justifyContent: 'center'}}>{dot}</View> 
       </TouchableOpacity>
     );
   }
 }
 
 export default Day;
+
